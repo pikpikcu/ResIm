@@ -1,0 +1,226 @@
+#!/bin/bash
+# https://github.com/pikpikcu
+# twitter: @sec715
+# Simpell OSINT
+
+# Faforit Colors
+BK=$(tput setaf 0) # Black
+RD=$(tput setaf 1) # Red
+GR=$(tput setaf 2) # Green
+YW=$(tput setaf 3) # Yellow
+BL=$(tput setab 4) # blue
+PP=$(tput setaf 5) # purple
+CY=$(tput setaf 6) # Cyan
+WH=$(tput setaf 7) # White
+NT=$(tput sgr0) # Netral
+BD=$(tput bold) # Bold
+
+_build="pikpikcu"
+_ver_="0.0.2"
+url="$1"
+IFS=$'\n'
+
+banner(){ 
+    echo -e  "
+     
+        >=>             >=>>=>               >=>   >=>             
+        >=>           >=>    >=>             >=>  >=>              
+        >=> >==>>==>   >=>          >=> >=>  >=> >=>       >==>  ${RD} -=()${NT} 
+        >=>  >=>  >=>    >=>      >=>   >=>  >>=>>       >>   >=>${RD}  (()
+    ${RD}<==============================================================(:)=======()  ${NT}        
+        >=>  >=>  >=>       >=>  >=>    >=>  >=>  >=>    >>===>>=> ${RD}(()${NT} 
+        >=>  >=>  >=> >=>    >=>  >=>   >=>  >=>   >=>   >>       ${RD}-=() ${NT}
+        >=> >==>  >=>   >=>>=>     >==>>>==> >=>     >=>  >====>   
+                            Version:$_ver_
+                            Created By:$_build
+\n"
+}
+
+url(){
+    echo -e  "\n${RD}[${GR}!${RD}] ${GR}START OSINT URLS ${NT}$url..${YW}🔍"
+    sleep 3
+    echo -e  "${RD}[${GR}!${RD}] ${CY}Searching For Sub-Domains..${YW}🔍"
+    assetfinder --subs-only $url | sort -u | tee -a > out.txt
+    echo -e  "${CY}[!]${GR} The Following sub-domains are Scanned..."
+        while read -r line;do
+            r=`nslookup $line | awk '/^Address: / { print $2 }'`
+            if [ "$r" == "" ];then
+                echo -e  "${RD}[!]${NT} $line ${RD}❌"
+            else
+                file_exist=$(cat out.txt | grep -c "$r")
+                if [ $file_exist -eq 0 ]; then  
+                    echo -e  "${CY}[*]${NT} $line ${GR}✅"
+                fi
+            fi
+        done < "out.txt"
+    echo -e  "${RD}[${GR}*${RD}] ${GR}DONE SCAN SUBDOMAIN......."
+    sleep 3
+    echo -e  "${RD}[${GR}!${RD}] ${GR}CHECK IP SUBDOMAIN..${YW}🔍"
+    while read -r line;do
+            r=`dig $line +short`
+            if [ "$r" == "" ];then
+                echo -e  "${RD}[!]${NT} $line ${RD}❌"
+            else
+                file_exist=$(cat out.txt | grep -c "$r")
+                if [ $file_exist -eq 0 ]; then  
+                    echo -e  "${CY}[*] ${YW}Domain: ${NT}$line ${PP}$r ${GR}✅"
+                fi 
+            fi
+    done < "out.txt"
+    echo -e  "${RD}[${GR}!${RD}] ${GR}DONE CHECK IP SUBDOMAIN......."
+    sleep 3
+    echo -e  "${RD}[${GR}!${RD}] ${GR}CHECK PORT OPEN..${YW}🔍"
+    while read -r line;do
+            r=`nmap $line | grep "tcp"`
+            if [ "$r" == "" ];then
+                echo -e  "${RD}[!]${NT} $line ${RD}Error"
+            else
+                file_exist=$(cat out.txt | grep -c "$r")
+                if [ $file_exist -eq 0 ]; then  
+                    echo -e  "${CY}[*]${YW} $line ${NT} \n$r \n"
+                fi 
+            fi
+    done < "out.txt"
+    echo -e "${RD}[${GR}*${RD}] ${GR}DONE CHECK PORT OPEN......."
+    sleep 3
+    echo -e "${RD}[${GR}*${RD}] ${GR}START REVERSE DNS..${YW}🔍"
+    while read -r line;do
+            r=`curl -s https://api.hackertarget.com/reversedns/?q=$line`
+            if [ "$r" == "" ];then
+                echo -e  "${RD}[!]${NT} $line ${RD}Error"
+            else
+                file_exist=$(cat out.txt | grep -c "$r")
+                if [ $file_exist -eq 0 ]; then  
+                    echo -e  "${CY}[*]${YW}Domain $line ${NT} \n$r"
+                fi 
+            fi
+    done < "out.txt"
+    echo -e "${RD}[${GR}*${RD}] ${GR}START REVERSEIPLOOKUP..${YW}🔍"
+    while read -r line;do
+            r=`curl -s https://api.hackertarget.com/reverseiplookup/?q=$line`
+            if [ "$r" == "" ];then
+                echo -e  "${RD}[!]${NT} $line ${RD}Error"
+            else
+                file_exist=$(cat out.txt | grep -c "$r")
+                if [ $file_exist -eq 0 ]; then  
+                    echo -e  "${CY}[*]${YW}Domain $line ${NT} \n$r"
+                fi 
+            fi
+    done < "out.txt"
+    echo -e "${RD}[${GR}*${RD}] ${GR}START DNSLOOKUP..${YW}🔍"
+    while read -r line;do
+            r=`curl -s https://api.hackertarget.com/dnslookup/?q=$line`
+            if [ "$r" == "" ];then
+                echo -e  "${RD}[!]${NT} $line ${RD}Error"
+            else
+                file_exist=$(cat out.txt | grep -c "$r")
+                if [ $file_exist -eq 0 ]; then  
+                    echo -e  "${CY}[*]${YW}Domain $line ${NT} \n$r"
+                fi 
+            fi
+    done < "out.txt"
+    echo -e "${RD}[${GR}*${RD}] ${GR}START SUBNETLOOKUP..${YW}🔍"
+    while read -r line;do
+            r=`curl -s https://api.hackertarget.com/subnetcalc/?q=$line`
+            if [ "$r" == "" ];then
+                echo -e  "${RD}[!]${NT} $line ${RD}Error"
+            else
+                file_exist=$(cat out.txt | grep -c "$r")
+                if [ $file_exist -eq 0 ]; then  
+                    echo -e  "${CY}[*]${YW}Domain $line ${NT} \n$r"
+                fi 
+            fi
+    done < "out.txt"
+    echo -e "${RD}[${GR}*${RD}] ${GR}START EXTRACKLINKS..${YW}🔍"
+    for i in $(cat out.txt | parallel -j50 -q lynx -listonly -dump );do 
+        file_exist=$(cat out.txt | grep -c "$i")
+        if [ $file_exist -eq 0 ]; then  
+            echo -e  "${CY}[*]${YW} $i ${NT}"
+        fi 
+    done 
+    echo -e "${RD}[${GR}!${RD}] ${GR}START WHOIS INFO..${YW}🔍 ${NT}"
+    for who in $(cat out.txt | parallel -j50 -q whois 2> /dev/null);do
+        if [[ $? -eq 0 ]];then
+         echo -e "\n${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Domain Name"  | tee -a  whois.txt
+         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Registry Domain ID" | tee -a  whois.txt
+         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Registrar WHOIS Server" | tee -a  whois.txt
+         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Registrar UR" | tee -a  whois.txt
+         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Updated Date" | tee -a  whois.txt
+         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Creation Date" | tee -a  whois.txt
+         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Registrar" | tee -a  whois.txt
+         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Registrar IANA ID" | tee -a  whois.txt
+         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Registrar Abuse Contact Email" | tee -a  whois.txt
+         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Registrar Abuse Contact Phone" | tee -a  whois.txt
+         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Domain Status" | tee -a  whois.txt
+         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Name Server" | tee -a  whois.txt
+         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "DNSSEC" | tee -a  whois.txt
+         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Registrant Name" | tee -a  whois.txt
+         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Registrant Organization" | tee -a  whois.txt
+         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Registrant Street" | tee -a  whois.txt
+         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Registrant City" | tee -a  whois.txt
+         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Registrant State/Province" | tee -a  whois.txt
+         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Registrant Postal Code" | tee -a  whois.txt
+         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Registrant Country" | tee -a  whois.txt
+         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Registrant Phone" | tee -a  whois.txt
+         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Registrant Phone Ext" | tee -a  whois.txt
+         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Registrant Fax" | tee -a  whois.txt
+         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Registrant Fax Ext" | tee -a  whois.txt
+         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Registrant Email" | tee -a  whois.txt
+         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Registry Admin ID" | tee -a  whois.txt
+         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Admin Name" | tee -a  whois.txt
+         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Admin Organization" | tee -a  whois.txt
+         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Admin Street" | tee -a  whois.txt
+         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Admin City" | tee -a  whois.txt
+         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Admin State/Province" | tee -a  whois.txt
+         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Admin Postal Code" | tee -a  whois.txt
+         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Admin Country" | tee -a  whois.txt
+         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Admin Phone" | tee -a  whois.txt
+         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Admin Phone Ext" | tee -a  whois.txt
+         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Admin Fax Ext" | tee -a  whois.txt
+         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Admin Email" | tee -a  whois.txt
+         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Registry Tech ID" | tee -a  whois.txt
+         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Tech Name" | tee -a  whois.txt
+         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Tech Organization" | tee -a  whois.txt
+         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Tech Street" | tee -a  whois.txt
+         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Tech City" | tee -a  whois.txt
+         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Tech State/Province" | tee -a  whois.txt
+         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Tech Postal Code" | tee -a  whois.txt
+         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Tech Country" | tee -a  whois.txt
+         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Tech Phone" | tee -a  whois.txt
+         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Tech Fax" | tee -a  whois.txt
+         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Tech Fax Ext" | tee -a  whois.txt
+         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Tech Email" | tee -a  whois.txt
+         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Registry Billing ID" | tee -a  whois.txt
+         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Billing Name" | tee -a  whois.txt
+         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Billing Organization" | tee -a  whois.txt
+         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Billing Street" | tee -a  whois.txt
+         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Billing City" | tee -a  whois.txt
+         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Billing State/Province" | tee -a  whois.txt
+         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Billing Postal Code" | tee -a  whois.txt
+         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Billing Country" | tee -a  whois.txt
+         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Billing Phone" | tee -a  whois.txt
+         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Billing Phone Ext" | tee -a  whois.txt
+         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Billing Fax" | tee -a  whois.txt
+         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Billing Fax Ext" | tee -a  whois.txt
+         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Billing Email" | tee -a  whois.txt
+        fi
+    done
+    rm whois.txt
+    echo -e  "${RD}[${GR}!${RD}] ${GR}DONE WHOIS INFO ${NT}"
+    exit 1
+}
+if [[ -z "$url" ]];
+    then
+    banner
+    echo -e  "\t\tUSAGE:"
+    echo -e  "\t\t\t$0 -u example.com\n"
+else 
+while [ $url ];do
+    case $url in 
+        "-u" | "--url") url=$2
+                banner
+                url $url
+        ;;
+    esac
+done
+fi
