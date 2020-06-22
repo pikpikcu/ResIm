@@ -2,7 +2,7 @@
 
 InSaKe is designed as a bash tool to find out domains,subdomains,ip subdomains, ports, DNS
 
-<h4 align="center"><img src="https://raw.githubusercontent.com/pikpikcu/InSaKe/master/insake.png" width="300px" height="300px">
+<h4 align="center"><img src="https://raw.githubusercontent.com/pikpikcu/InSaKe/master/insake.png" >
 
 </a>
 <h4 align="center">Details</h4>                
@@ -15,7 +15,7 @@ InSaKe is designed as a bash tool to find out domains,subdomains,ip subdomains, 
    <img src="https://img.shields.io/badge/telegram--blue.svg">
    </a>
   <a href="https://github.com/pikpikcu/InSaKe">
-    <img src="https://img.shields.io/badge/version-V1.4-green.svg">
+    <img src="https://img.shields.io/badge/version-V0.0.2-green.svg">
  </a>
  </a>
 </p>
