@@ -19,13 +19,18 @@ InSaKe is designed as a bash tool to find out domains,subdomains,ip subdomains, 
  </a>
  </a>
 </p>
-
 ## Screenshots 
-![](https://raw.githubusercontent.com/pikpikcu/InSaKe/master/1.png)
-![](https://raw.githubusercontent.com/pikpikcu/InSaKe/master/2.png)
+<center><table><tr>
+<td><img src="https://raw.githubusercontent.com/pikpikcu/InSaKe/master/1.png" width="250px" height="250px"></td>
+<td><img src="https://raw.githubusercontent.com/pikpikcu/InSaKe/master/2.png" width="250px" height="250px"></td>
+ </tr></table></center>
+
 
 ## Example
 > ./insake -u domain
 
 ### bash
 > This tool has been created using bash scripting so all you need is a linux machine.
+
+## DnsDumster 
+![](https://raw.githubusercontent.com/pikpikcu/InSaKe/master/duit.cc.png)
