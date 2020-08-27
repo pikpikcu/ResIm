@@ -1,7 +1,6 @@
 #!/bin/bash
 # https://github.com/pikpikcu
 # twitter: @sec715
-# Simpell OSINT
 
 # Faforit Colors
 BK=$(tput setaf 0) # Black
@@ -23,29 +22,21 @@ BG=$(tput setab 11)
 NT=$(tput sgr0) # Netral
 BD=$(tput bold) # Bold
 
-_build="pikpikcu"
-_ver_="0.0.2"
 url="$1"
-IFS=$'\n'
 
 banner(){ 
-    echo -e  "
-     
-        >=>             >=>>=>               >=>   >=>             
-        >=>           >=>    >=>             >=>  >=>              
-        >=> >==>>==>   >=>          >=> >=>  >=> >=>       >==>  ${RD} -=()${NT} 
-        >=>  >=>  >=>    >=>      >=>   >=>  >>=>>       >>   >=>${RD}  (()
-    ${RD}<==============================================================(:)=======()  ${NT}        
-        >=>  >=>  >=>       >=>  >=>    >=>  >=>  >=>    >>===>>=> ${RD}(()${NT} 
-        >=>  >=>  >=> >=>    >=>  >=>   >=>  >=>   >=>   >>       ${RD}-=() ${NT}
-        >=> >==>  >=>   >=>>=>     >==>>>==> >=>     >=>  >====>   
-                            Version:$_ver_
-                            Created By:$_build
+    echo -e  "${CY}
+    ▄▄▄  ▄▄▄ ..▄▄ · ▪  • ▌ ▄ ·. 
+    ▀▄ █·▀▄.▀·▐█ ▀. ██ ·██ ▐███▪
+    ▐▀▀▄ ▐▀▀▪▄▄▀▀▀█▄▐█·▐█ ▌▐▌▐█·
+    ▐█•█▌▐█▄▄▌▐█▄▪▐█▐█▌██ ██▌▐█▌
+    .▀  ▀ ▀▀▀  ▀▀▀▀ ▀▀▀▀▀  █▪▀▀▀
+            [[ Recon Simple! ]]
 \n"
 }
 
 url(){
-    echo -e  "\n${RD}[${GR}+${RD}] ${GR1}START ON InSaKe URLS ${NT}$url..${YW}🔍"
+    echo -e  "\n${RD}[${GR}+${RD}] ${GR1}START ON Target URLS ${NT}$url..${YW}🔍"
     sleep 3
     echo -e  "${RD}[${GR}!${RD}] ${CY}Searching For Sub-Domains..${YW}🔍"
     echo -e  "${RD}[${BL}*${RD}] ${KN}Starting Sub-Domains For assetfinder..${YW}🔍"
@@ -78,7 +69,7 @@ url(){
         rm -rf $out/$url-alivee.txt
     echo -e  "${RD}[${GR}*${RD}] ${GR}DONE SCAN SUBDOMAIN......."
     sleep 3
-    echo -e  "${RD}[${GR}!${RD}] ${GR}CHECK IP SUBDOMAIN..${YW}🔍"
+    echo -e  "${RD}[${GR}!${RD}] ${GR}Find IP for SUBDOMAIN..${YW}🔍"
     while read -r line;do
             r=`dig $line +short`
             if [ "$r" == "" ];then
@@ -163,74 +154,6 @@ url(){
     done 
     echo -e "${RD}[${GR}*${RD}]${GR} Aquatone Screenshot"
     cat $out/$url-alive.txt | aquatone -screenshot-timeout 10 -out $out/screenshots/
-    echo -e "${RD}[${GR}!${RD}] ${GR}START WHOIS INFO..${YW}🔍 ${NT}"
-    for who in $(cat $out/$url-alive.txt | parallel -j50 -q whois 2> /dev/null);do
-        if [[ $? -eq 0 ]];then
-         echo -e "\n${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Domain Name"  
-         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Registry Domain ID" 
-         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Registrar WHOIS Server" 
-         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Registrar UR" 
-         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Updated Date" 
-         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Creation Date" 
-         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Registrar" 
-         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Registrar IANA ID" 
-         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Registrar Abuse Contact Email" 
-         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Registrar Abuse Contact Phone" 
-         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Domain Status" 
-         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Name Server" 
-         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "DNSSEC" 
-         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Registrant Name" 
-         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Registrant Organization" 
-         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Registrant Street" 
-         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Registrant City" 
-         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Registrant State/Province" 
-         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Registrant Postal Code" 
-         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Registrant Country" 
-         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Registrant Phone" 
-         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Registrant Phone Ext" 
-         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Registrant Fax" 
-         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Registrant Fax Ext" 
-         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Registrant Email" 
-         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Registry Admin ID" 
-         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Admin Name" 
-         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Admin Organization" 
-         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Admin Street" 
-         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Admin City" 
-         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Admin State/Province" 
-         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Admin Postal Code" 
-         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Admin Country" 
-         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Admin Phone" 
-         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Admin Phone Ext" 
-         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Admin Fax Ext" 
-         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Admin Email" 
-         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Registry Tech ID" 
-         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Tech Name" 
-         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Tech Organization" 
-         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Tech Street" 
-         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Tech City" 
-         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Tech State/Province" 
-         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Tech Postal Code" 
-         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Tech Country" 
-         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Tech Phone" 
-         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Tech Fax" 
-         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Tech Fax Ext" 
-         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Tech Email" 
-         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Registry Billing ID" 
-         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Billing Name" 
-         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Billing Organization" 
-         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Billing Street" 
-         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Billing City" 
-         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Billing State/Province" 
-         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Billing Postal Code" 
-         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Billing Country" 
-         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Billing Phone" 
-         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Billing Phone Ext" 
-         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Billing Fax" 
-         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Billing Fax Ext" 
-         echo -e  "${RD}[${GR}*${RD}]${NT} $who" | grep -A2 "Billing Email" 
-        fi
-    done
-    echo -e  "${RD}[${GR}!${RD}] ${GR}DONE WHOIS INFO ${NT}"
     exit 1
 }
 if [[ -z "$url" ]];
@@ -239,7 +162,7 @@ if [[ -z "$url" ]];
     echo -e  "\t\tUSAGE:"
     echo -e  "\t\t\t$0 -u example.com\n"
 else 
-while [ $url ];do
+while true;do
     case $url in 
         "-u" | "--url") url=$2
                 banner
